@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Admin Panel</h1>
+                <div class="user-info">
+                    <span><%= user.name %> (Admin)</span>
+                    <a href="/logout" class="btn-secondary">Logout</a>
+                </div>
+            </div>
+
+            <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+                <div class="alert alert-error"><%= error_msg %></div>
+            <% } %>
+            <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+                <div class="alert alert-success"><%= success_msg %></div>
+            <% } %>
+
+            <div class="admin-content">
+                <div class="users-section">
+                    <h2>Registered Users</h2>
+                    <div class="users-list">
+                        <% users.forEach(user => { %>
+                            <div class="user-item <%= selectedUser && selectedUser.id === user.id ? 'selected' : '' %>">
+                                <div class="user-info">
+                                    <div class="user-name"><%= user.name %></div>
+                                    <div class="user-email"><%= user.email %></div>
+                                </div>
+                                <a href="/admin-9382-hidden/user/<%= user.id %>" class="btn-secondary">View Payments</a>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <% if (selectedUser) { %>
+                    <div class="payments-section">
+                        <h3><%= selectedUser.name %>'s Payments</h3>
+                        <% if (Object.keys(payments).length === 0) { %>
+                            <p>No payments found.</p>
+                        <% } else { %>
+                            <% Object.keys(payments).forEach(monthKey => { %>
+                                <% const group = payments[monthKey]; %>
+                                <div class="month-group">
+                                    <div class="month-header"><%= group.name %></div>
+                                    <div class="total-amount">Total: $<%= group.total.toFixed(2) %></div>
+                                    <% group.payments.forEach(payment => { %>
+                                        <div class="payment-admin-item">
+                                            <div class="payment-admin-info">
+                                                <div class="payment-admin-amount">$<%= payment.amount.toFixed(2) %></div>
+                                                <div class="payment-admin-date"><%= payment.createdAt.toLocaleDateString() %></div>
+                                            </div>
+                                            <button class="download-btn" onclick="window.open('<%= payment.fileUrl %>', '_blank')">Download</button>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <script src="/js/app.js"></script>
+</body>
+</html>

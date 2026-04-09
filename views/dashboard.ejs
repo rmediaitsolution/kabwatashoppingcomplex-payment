@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <span>Welcome, <%= user.name %></span>
+                    <a href="/logout" class="btn-secondary">Logout</a>
+                </div>
+            </div>
+
+            <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+                <div class="alert alert-error"><%= error_msg %></div>
+            <% } %>
+            <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+                <div class="alert alert-success"><%= success_msg %></div>
+            <% } %>
+
+            <div class="upload-section">
+                <h2>Submit Payment</h2>
+                <form action="/dashboard/submit-payment" method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <input type="number" name="amount" placeholder="Amount" step="0.01" required>
+                    <input type="file" name="file" accept="image/*,.pdf" required>
+                    <button type="submit" class="btn-primary" id="submitBtn">Submit</button>
+                </form>
+                <div id="loading" class="loading hidden">Uploading...</div>
+            </div>
+
+            <div class="history-section">
+                <h2>Payment History</h2>
+                <% if (payments.length === 0) { %>
+                    <p>No payments found.</p>
+                <% } else { %>
+                    <div class="payments-list">
+                        <% payments.forEach(payment => { %>
+                            <div class="payment-item">
+                                <div class="payment-info">
+                                    <div class="payment-amount">$<%= payment.amount.toFixed(2) %></div>
+                                    <div class="payment-date"><%= payment.createdAt.toLocaleDateString() %></div>
+                                </div>
+                                <button class="view-btn" onclick="window.open('<%= payment.fileUrl %>', '_blank')">View</button>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <script src="/js/app.js"></script>
+</body>
+</html>
